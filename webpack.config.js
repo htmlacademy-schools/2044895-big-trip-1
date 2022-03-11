@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-    entry: '.src/main.js',
+    entry: './src/main.js',
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'public')
@@ -9,7 +9,7 @@ module.exports = {
     devtool: 'source-map',
     devServer: {
         hot: false
-      },
+    },
     module: {
         rules: [
             {
@@ -18,5 +18,6 @@ module.exports = {
                 use: ['babel-loader']
             }
         ]
+        
     }
 };
