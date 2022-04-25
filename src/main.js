@@ -4,7 +4,7 @@ import { createMenuInfoTemplate} from './view/menu-info';
 import { createFiltersTemplate } from './view/filters.js';
 import { createSortTemplate} from './view/sort';
 import { createRoutePointListTemplate} from './view/route-point-lists';
-import { createRoutePointTemplate } from './view/route-point.js';
+//import { createRoutePointTemplate } from './view/route-point.js';
 
 
 const siteMenu = document.querySelector('.trip-controls__navigation');
