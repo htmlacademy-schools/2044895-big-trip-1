@@ -1,25 +1,21 @@
-import { renderTemplate, RenderPosition } from '../public/render.js'
+import { renderTemplate, renderPosition } from '../public/render.js';
+import { createMenuTemplate } from './view/menu';
+import { createMenuInfoTemplate} from './view/menu-info';
 import { createFiltersTemplate } from './view/filters.js';
-import { createRoutePointTemplate } from './view/route-point.js'
-import { createHeaderTemplate } from './view/header.js'
-
-var page = document.querySelector('.page-header'); // Пытаюсь проверить подключен ли main.js вообще
-page.remove()
+import { createSortTemplate} from './view/sort';
+import { createRoutePointListTemplate} from './view/route-point-lists';
+import { createRoutePointTemplate } from './view/route-point.js';
 
 
-const siteMainElement = document.querySelector('.page-main');
-const bodyContainer = siteEventsElement.querySelector('.page-body__container');
-const siteEventsElement = document.querySelector('.trip-events');
-
-
-const siteEventsListElement = siteEventsElement.querySelector('.trip-events__list');
+const siteMenu = document.querySelector('.trip-controls__navigation');
+const siteMenuInfo = document.querySelector('.trip-main');
 const siteFilters = document.querySelector('.trip-controls__filters');
-const siteMenu = document.querySelector('.trip-main');
+const siteEvents = document.querySelector('.trip-events');
 
-for (let i = 0; i < 3; i++) {
-    renderItem(bodyContainer, createRoutePointTemplate(), importPositions.BEFOREEND);
-  }
 
-renderTemplate(siteMainElement, createFiltersTemplate(), RenderPosition.BEFOREEND)
-renderTemplate(siteEventsElement, createFiltersTemplate(), RenderPosition.BEFOREEND)
-renderTemplate(siteEventsElement, createRoutePointTemplate(), RenderPosition.BEFOREEND);
+renderTemplate(siteMenuInfo, createMenuInfoTemplate(), renderPosition.AFTERBEGIN);
+renderTemplate(siteMenu, createMenuTemplate(), renderPosition.BEFOREEND);
+renderTemplate(siteFilters, createFiltersTemplate(), renderPosition.BEFOREEND);
+renderTemplate(siteEvents, createSortTemplate(), renderPosition.BEFOREEND);
+renderTemplate(siteEvents, createRoutePointListTemplate(), renderPosition.BEFOREEND);
+
