@@ -1,5 +1,5 @@
 export const createEditForm= (routePoint) => {
-  const { type, city, offers, description, pictureSrc } = routePoint;
+  const { type, city } = routePoint;
 
   return (`
   <form class="event event--edit" action="#" method="post">
@@ -181,4 +181,4 @@ export const createEditForm= (routePoint) => {
       </section>
     </section>
   </form>`);
-}
+};

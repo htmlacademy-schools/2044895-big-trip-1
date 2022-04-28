@@ -1,5 +1,5 @@
 export const createRoutePointTemplate = (routePoint) => {
-  const { type, city, offers, description, pictureSrc } = routePoint;
+  const { type, city, offers, pictureSrc } = routePoint;
 
   return `
   <li class="trip-events__item">
