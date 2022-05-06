@@ -1,3 +1,5 @@
+import { createElement } from '../../public/render.js';
+
 export const createRoutePointTemplate = (routePoint) => {
   const { type, city, offers, pictureSrc } = routePoint;
 
@@ -41,3 +43,26 @@ export const createRoutePointTemplate = (routePoint) => {
     </div>
   </li>`;
 };
+
+export default class RoutePoint {
+  #element = null;
+
+  constructor(routePoint) {
+    this.routePoint = routePoint;
+  }
+
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createRoutePointTemplate(this.routePoint);
+  }
+
+  removeElement() {
+    this.element = null; }
+}
