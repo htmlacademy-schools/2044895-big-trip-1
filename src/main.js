@@ -1,4 +1,4 @@
-import { renderTemplate, renderPosition } from '../public/render.js';
+import { renderTemplate, renderPosition, renderElement } from '../public/render.js';
 import Menu from './view/menu';
 import MenuInfo from './view/menu-info';
 import Filters from './view/filters.js';
@@ -13,16 +13,53 @@ const siteMenu = document.querySelector('.trip-controls__navigation');
 const siteMenuInfo = document.querySelector('.trip-main');
 const siteFilters = document.querySelector('.trip-controls__filters');
 const siteEvents = document.querySelector('.trip-events');
-renderTemplate(siteMenuInfo, new MenuInfo().element, renderPosition.AFTERBEGIN);
-renderTemplate(siteMenu, new Menu().element, renderPosition.BEFOREEND);
-renderTemplate(siteFilters, new Filters().element, renderPosition.BEFOREEND);
-renderTemplate(siteEvents, new Sort().element, renderPosition.BEFOREEND);
-renderTemplate(siteEvents, new RoutePointLists().element, renderPosition.BEFOREEND);
-debugger;
-const siteEventList = document.querySelector('.trip-events__list');
-renderTemplate(siteEventList, new EditForm(generateRoutePoint()).element,renderPosition.BEFOREEND);
-const routPoints = [];
+
+renderElement(siteMenuInfo, new MenuInfo().element, renderPosition.AFTERBEGIN);
+renderElement(siteMenu, new Menu().element, renderPosition.BEFOREEND);
+renderElement(siteFilters, new Filters().element, renderPosition.BEFOREEND);
+renderElement(siteEvents, new Sort().element, renderPosition.BEFOREEND);
+
+const routePointList = new RoutePointLists();
+renderElement(siteEvents, routePointList.element, renderPosition.BEFOREEND);
+
+function renderRoutePoint(routePointListElement, routePoint) {
+  const routePointComponent =  new RoutePoint(routePoint);
+  const editFormComponent = new EditForm(routePoint);
+
+  const replacePointToEditForm = () => (
+    routePointListElement.replaceChild(routePointComponent.element, editFormComponent.element)
+  );
+
+  const replaceEditFormToPoint = () => (
+    routePointListElement.replaceChild(editFormComponent.element, routePointComponent.element)
+  );
+
+  const onEscKeyDown = (evt) =>
+  {
+    if (evt.key === 'Esc' || evt.key === 'Escape') {
+      evt.preventDefault();
+      replaceEditFormToPoint();
+      document.removeEventListener('keydown', onEscKeyDown);
+    }
+  };
+
+
+  /*routePointComponent.element.querySelector('event__rollup-btn').addEventListener('click', () => {
+    replacePointToEditForm();
+    document.addEventListener('keydown', onEscKeyDown);
+  });
+
+  editFormComponent.element.querySelector('event__rollup-btn').addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    replaceEditFormToPoint();
+  });*/
+
+  renderElement(routePointListElement.element, routePointComponent.element, renderPosition.BEFOREEND);
+}
+
+
+const routePoints = [];
 for (let i = 0; i < 5; i++) {
-  routPoints.push(generateRoutePoint());
-  renderTemplate(siteEventList, new RoutePoint(routPoints[i]).element,renderPosition.BEFOREEND);
+  routePoints.push(generateRoutePoint());
+  renderRoutePoint(routePointList, routePoints[i]);
 }

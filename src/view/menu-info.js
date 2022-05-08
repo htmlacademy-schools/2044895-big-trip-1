@@ -16,7 +16,7 @@ export default class MenuInfo {
 
   get element() {
     if (!this.#element) {
-      this.#element = this.template;
+      this.#element = createElement(this.template);
     }
 
     return this.#element;
