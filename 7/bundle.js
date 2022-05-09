@@ -46,7 +46,7 @@ const renderElement = (container, element, place) => {
 const createElement = template => {
   const newElement = document.createElement("div");
   newElement.innerHTML = template;
-  return newElement.children[0];
+  return newElement.firstChild;
 };
 
 /***/ }),
@@ -132,8 +132,7 @@ const createEditForm = routePoint => {
     type,
     city
   } = routePoint;
-  return `
-  <form class="event event--edit" action="#" method="post">
+  return `<form class="event event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" htmlFor="event-type-toggle-1">
@@ -353,8 +352,7 @@ function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!priva
 function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
 
 
-const createFiltersTemplate = () => `
-<div class="trip-controls__filters">
+const createFiltersTemplate = () => `<div class="trip-controls__filters">
 <h2 class="visually-hidden">Filter events</h2>
 <form class="trip-filters" action="#" method="get">
   <div class="trip-filters__filter">
@@ -430,8 +428,7 @@ function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!priva
 function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
 
 
-const createMenuInfoTemplate = () => `
-  <section class="trip-main__trip-info  trip-info">
+const createMenuInfoTemplate = () => `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
       <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
       <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
@@ -498,8 +495,7 @@ function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!priva
 function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
 
 
-const createMenuTemplate = () => `
-  <nav class="trip-controls__trip-tabs  trip-tabs">
+const createMenuTemplate = () => `<nav class="trip-controls__trip-tabs  trip-tabs">
     <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
     <a class="trip-tabs__btn" href="#">Stats</a>
   </nav>`;
@@ -561,8 +557,7 @@ function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!priva
 function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
 
 
-const createRoutePointListTemplate = () => `
-  <ul class="trip-events__list"></ul>`;
+const createRoutePointListTemplate = () => '<ul class="trip-events__list"></ul>';
 
 var _element = /*#__PURE__*/new WeakMap();
 
@@ -628,8 +623,7 @@ const createRoutePointTemplate = routePoint => {
     offers,
     pictureSrc
   } = routePoint;
-  return `
-  <li class="trip-events__item">
+  return `<li class="trip-events__item">
     <div class="event">
       <time class="event__date" dateTime="2019-03-18">MAR 18</time>
       <div class="event__type">
@@ -728,8 +722,7 @@ function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!priva
 function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
 
 
-const createSortTemplate = () => `
-  <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+const createSortTemplate = () => `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
     <div class="trip-sort__item  trip-sort__item--day">
       <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-day"
              checked>
@@ -883,9 +876,9 @@ function renderRoutePoint(routePointListElement, routePoint) {
   const routePointComponent = new _view_route_point_js__WEBPACK_IMPORTED_MODULE_6__["default"](routePoint);
   const editFormComponent = new _view_edit_form__WEBPACK_IMPORTED_MODULE_8__["default"](routePoint);
 
-  const replacePointToEditForm = () => routePointListElement.replaceChild(routePointComponent.element, editFormComponent.element);
+  const replacePointToEditForm = () => routePointListElement.element.replaceChild(editFormComponent.element, routePointComponent.element);
 
-  const replaceEditFormToPoint = () => routePointListElement.replaceChild(editFormComponent.element, routePointComponent.element);
+  const replaceEditFormToPoint = () => routePointListElement.element.replaceChild(routePointComponent.element, editFormComponent.element);
 
   const onEscKeyDown = evt => {
     if (evt.key === 'Esc' || evt.key === 'Escape') {
@@ -894,16 +887,19 @@ function renderRoutePoint(routePointListElement, routePoint) {
       document.removeEventListener('keydown', onEscKeyDown);
     }
   };
-  /*routePointComponent.element.querySelector('event__rollup-btn').addEventListener('click', () => {
+
+  routePointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
     replacePointToEditForm();
     document.addEventListener('keydown', onEscKeyDown);
   });
-   editFormComponent.element.querySelector('event__rollup-btn').addEventListener('submit', (evt) => {
+  editFormComponent.element.querySelector('.event__rollup-btn').addEventListener('click', evt => {
     evt.preventDefault();
     replaceEditFormToPoint();
-  });*/
-
-
+  });
+  editFormComponent.element.querySelector('.event__rollup-btn').addEventListener('submit', evt => {
+    evt.preventDefault();
+    replaceEditFormToPoint();
+  });
   (0,_public_render_js__WEBPACK_IMPORTED_MODULE_0__.renderElement)(routePointListElement.element, routePointComponent.element, _public_render_js__WEBPACK_IMPORTED_MODULE_0__.renderPosition.BEFOREEND);
 }
 
