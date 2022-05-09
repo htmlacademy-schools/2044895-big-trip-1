@@ -7,6 +7,7 @@ import RoutePointLists from './view/route-point-lists';
 import RoutePoint from './view/route-point.js';
 import { generateRoutePoint } from './mock/generate-route-point';
 import EditForm from './view/edit-form';
+import ListEmptyMessage from './view/list-empty';
 
 
 const siteMenu = document.querySelector('.trip-controls__navigation');
@@ -67,4 +68,8 @@ const routePoints = [];
 for (let i = 0; i < 5; i++) {
   routePoints.push(generateRoutePoint());
   renderRoutePoint(routePointList, routePoints[i]);
+}
+
+if (routePoints.length === 0) {
+  renderElement(routePointList.element, new ListEmptyMessage().element, renderPosition.BEFOREEND)
 }
