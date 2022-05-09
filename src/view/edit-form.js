@@ -3,8 +3,8 @@ import { createElement } from '../../public/render.js';
 export const createEditForm= (routePoint) => {
   const { type, city } = routePoint;
 
-  return (`
-  <form class="event event--edit" action="#" method="post">
+  return (
+    `<form class="event event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
         <label class="event__type  event__type-btn" htmlFor="event-type-toggle-1">

@@ -27,11 +27,11 @@ function renderRoutePoint(routePointListElement, routePoint) {
   const editFormComponent = new EditForm(routePoint);
 
   const replacePointToEditForm = () => (
-    routePointListElement.replaceChild(routePointComponent.element, editFormComponent.element)
+    routePointListElement.element.replaceChild(editFormComponent.element, routePointComponent.element)
   );
 
   const replaceEditFormToPoint = () => (
-    routePointListElement.replaceChild(editFormComponent.element, routePointComponent.element)
+    routePointListElement.element.replaceChild(routePointComponent.element, editFormComponent.element)
   );
 
   const onEscKeyDown = (evt) =>
@@ -44,15 +44,20 @@ function renderRoutePoint(routePointListElement, routePoint) {
   };
 
 
-  /*routePointComponent.element.querySelector('event__rollup-btn').addEventListener('click', () => {
+  routePointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
     replacePointToEditForm();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  editFormComponent.element.querySelector('event__rollup-btn').addEventListener('submit', (evt) => {
+  editFormComponent.element.querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
     evt.preventDefault();
     replaceEditFormToPoint();
-  });*/
+  });
+  editFormComponent.element.querySelector('.event__rollup-btn').addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    replaceEditFormToPoint();
+  });
+
 
   renderElement(routePointListElement.element, routePointComponent.element, renderPosition.BEFOREEND);
 }

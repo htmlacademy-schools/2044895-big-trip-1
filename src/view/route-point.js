@@ -3,8 +3,7 @@ import { createElement } from '../../public/render.js';
 export const createRoutePointTemplate = (routePoint) => {
   const { type, city, offers, pictureSrc } = routePoint;
 
-  return `
-  <li class="trip-events__item">
+  return `<li class="trip-events__item">
     <div class="event">
       <time class="event__date" dateTime="2019-03-18">MAR 18</time>
       <div class="event__type">

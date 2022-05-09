@@ -1,7 +1,7 @@
 import { createElement } from '../../public/render.js';
 
-export const createRoutePointListTemplate = () => (`
-  <ul class="trip-events__list"></ul>`);
+export const createRoutePointListTemplate = () => (
+  '<ul class="trip-events__list"></ul>');
 
 
 export default class RoutePointLists {
