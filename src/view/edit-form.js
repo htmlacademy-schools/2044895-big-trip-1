@@ -1,4 +1,4 @@
-import { createElement } from '../../public/render.js';
+import AbstractView from './abstract-view';
 
 export const createEditForm= (routePoint) => {
   const { type, city } = routePoint;
@@ -165,25 +165,35 @@ export const createEditForm= (routePoint) => {
   </form>`);
 };
 
-export default class EditForm {
-  #element = null;
+export default class EditForm extends AbstractView{
+  #routePoint = null;
 
   constructor(routePoint) {
+    super();
     this.routePoint = routePoint;
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  setEditSubmitHandeler = (callback) => {
+    this._callback.editSubmit = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('submit', this.#editSubmitHandler);
+  }
 
-    return this.#element;
+  setEditClickHandeler = (callback) => {
+    this._callback.editClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+  }
+
+  #editSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.editSubmit();
+  }
+
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 
   get template() {
     return createEditForm(this.routePoint);
   }
-
-  removeElement() {
-    this.element = null; }
 }

@@ -1,4 +1,4 @@
-import { renderTemplate, renderPosition, renderElement } from '../public/render.js';
+import { renderTemplate, renderPosition, renderElement } from './utils/render.js';
 import Menu from './view/menu';
 import MenuInfo from './view/menu-info';
 import Filters from './view/filters.js';
@@ -15,13 +15,13 @@ const siteMenuInfo = document.querySelector('.trip-main');
 const siteFilters = document.querySelector('.trip-controls__filters');
 const siteEvents = document.querySelector('.trip-events');
 
-renderElement(siteMenuInfo, new MenuInfo().element, renderPosition.AFTERBEGIN);
-renderElement(siteMenu, new Menu().element, renderPosition.BEFOREEND);
-renderElement(siteFilters, new Filters().element, renderPosition.BEFOREEND);
-renderElement(siteEvents, new Sort().element, renderPosition.BEFOREEND);
+renderElement(siteMenuInfo, new MenuInfo(), renderPosition.AFTERBEGIN);
+renderElement(siteMenu, new Menu(), renderPosition.BEFOREEND);
+renderElement(siteFilters, new Filters(), renderPosition.BEFOREEND);
+renderElement(siteEvents, new Sort(), renderPosition.BEFOREEND);
 
 const routePointList = new RoutePointLists();
-renderElement(siteEvents, routePointList.element, renderPosition.BEFOREEND);
+renderElement(siteEvents, routePointList, renderPosition.BEFOREEND);
 
 function renderRoutePoint(routePointListElement, routePoint) {
   const routePointComponent =  new RoutePoint(routePoint);
@@ -45,22 +45,23 @@ function renderRoutePoint(routePointListElement, routePoint) {
   };
 
 
-  routePointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+  routePointComponent.setEditClickHandeler(() => {
     replacePointToEditForm();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  editFormComponent.element.querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
-    evt.preventDefault();
+  editFormComponent.setEditClickHandeler(() => {
     replaceEditFormToPoint();
+    document.removeEventListener('keydown', onEscKeyDown);
   });
-  editFormComponent.element.querySelector('.event__rollup-btn').addEventListener('submit', (evt) => {
-    evt.preventDefault();
+
+  editFormComponent.setEditSubmitHandeler(() => {
     replaceEditFormToPoint();
+    document.removeEventListener('keydown', onEscKeyDown);
   });
 
 
-  renderElement(routePointListElement.element, routePointComponent.element, renderPosition.BEFOREEND);
+  renderElement(routePointListElement, routePointComponent, renderPosition.BEFOREEND);
 }
 
 
@@ -71,5 +72,5 @@ for (let i = 0; i < 5; i++) {
 }
 
 if (routePoints.length === 0) {
-  renderElement(routePointList.element, new ListEmptyMessage().element, renderPosition.BEFOREEND)
+  renderElement(routePointList, new ListEmptyMessage(), renderPosition.BEFOREEND)
 }

@@ -1,4 +1,4 @@
-import { createElement } from '../../public/render.js';
+import AbstractView from './abstract-view';
 
 export const createMenuInfoTemplate = () => (
   `<section class="trip-main__trip-info  trip-info">
@@ -11,21 +11,8 @@ export const createMenuInfoTemplate = () => (
     </p>
   </section>`);
 
-export default class MenuInfo {
-  #element = null;
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
+export default class MenuInfo extends AbstractView {
   get template() {
     return createMenuInfoTemplate();
   }
-
-  removeElement() {
-    this.element = null; }
 }

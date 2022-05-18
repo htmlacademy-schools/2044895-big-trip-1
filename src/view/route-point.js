@@ -1,4 +1,4 @@
-import { createElement } from '../../public/render.js';
+import AbstractView from './abstract-view';
 
 export const createRoutePointTemplate = (routePoint) => {
   const { type, city, offers, pictureSrc } = routePoint;
@@ -43,25 +43,26 @@ export const createRoutePointTemplate = (routePoint) => {
   </li>`;
 };
 
-export default class RoutePoint {
-  #element = null;
+export default class RoutePoint extends AbstractView {
+  #routePoint = null;
 
   constructor(routePoint) {
+    super();
     this.routePoint = routePoint;
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createRoutePointTemplate(this.routePoint);
   }
 
-  removeElement() {
-    this.element = null; }
+  setEditClickHandeler = (callback) => {
+    this._callback.editClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+  }
+
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.editClick();
+  }
 }
+
