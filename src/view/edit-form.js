@@ -170,7 +170,7 @@ export default class EditForm extends AbstractView{
 
   constructor(routePoint) {
     super();
-    this.routePoint = routePoint;
+    this.#routePoint = routePoint;
   }
 
   setEditSubmitHandeler = (callback) => {
@@ -194,6 +194,6 @@ export default class EditForm extends AbstractView{
   }
 
   get template() {
-    return createEditForm(this.routePoint);
+    return createEditForm(this.#routePoint);
   }
 }

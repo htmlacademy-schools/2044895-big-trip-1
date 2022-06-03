@@ -48,16 +48,26 @@ export default class RoutePoint extends AbstractView {
 
   constructor(routePoint) {
     super();
-    this.routePoint = routePoint;
+    this.#routePoint = routePoint;
   }
 
   get template() {
-    return createRoutePointTemplate(this.routePoint);
+    return createRoutePointTemplate(this.#routePoint);
   }
 
   setEditClickHandeler = (callback) => {
     this._callback.editClick = callback;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+  }
+
+  setFavoriteClickHandler = (callback) => {
+    this._callback.favoriteClick = callback;
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
+  }
+
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.favoriteClick();
   }
 
   #editClickHandler = (evt) => {
