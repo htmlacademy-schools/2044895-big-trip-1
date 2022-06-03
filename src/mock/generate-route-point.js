@@ -1,17 +1,4 @@
-export const generateRoutePoint = function () {
-  const newType = generateType();
-  return {
-    city: generateCity(),
-    offers: {
-      type: newType,
-      name: generateOfferName(),
-      cost: getRandomInt(0, 100),
-    },
-    type: newType,
-    description: generateDescription(),
-    pictureSrc: `http://picsum.photos/248/152?r=${Math.random()}`
-  };
-};
+import {nanoid} from 'nanoid';
 
 const getRandomInt = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -41,3 +28,20 @@ const generateOfferName = () => (offers[getRandomInt(0, offers.length - 1)]);
 
 const cities = ['Tokyo', 'Paris', 'Vladivostok', 'Rome', 'London', 'San Francisco', 'Los Angeles', 'Sydney', 'Bruges'];
 const generateCity = () => (cities[getRandomInt(0, cities.length - 1)]);
+
+export const generateRoutePoint = function () {
+  const newType = generateType();
+  return {
+    city: generateCity(),
+    offers: {
+      type: newType,
+      name: generateOfferName(),
+      cost: getRandomInt(0, 100),
+    },
+    id: nanoid(),
+    type: newType,
+    isFavorite: false,
+    description: generateDescription(),
+    pictureSrc: `http://picsum.photos/248/152?r=${Math.random()}`
+  };
+};
