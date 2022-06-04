@@ -26,7 +26,7 @@ export default class RoutePointPresenter {
     this.#routePoint = routePoint;
     this.#routePointComponent = new RoutePoint(routePoint);
     this.#editFormComponent = new EditForm(routePoint);
-    this.#setListeners();
+    this.#setHandlers();
   }
 
   render = () => {
@@ -42,7 +42,7 @@ export default class RoutePointPresenter {
     this.#mode = Mode.DEFAULT;
   }
 
-  #setListeners = () => {
+  #setHandlers = () => {
     const onEscKeyDown = (evt) =>
     {
       if (evt.key === 'Esc' || evt.key === 'Escape') {
@@ -64,7 +64,7 @@ export default class RoutePointPresenter {
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    this.#editFormComponent.setEditSubmitHandeler(() => {
+    this.#editFormComponent.setFormSubmitHandeler(() => {
       this.replaceEditFormToPoint();
       document.removeEventListener('keydown', onEscKeyDown);
     });
