@@ -1,4 +1,4 @@
-import { renderTemplate, renderPosition, renderElement } from './utils/render.js';
+import { renderPosition, renderElement } from './utils/render.js';
 import Menu from './view/menu';
 import MenuInfo from './view/menu-info';
 import Filters from './view/filters.js';
@@ -15,7 +15,4 @@ renderElement(siteMenu, new Menu(), renderPosition.BEFOREEND);
 renderElement(siteFilters, new Filters(), renderPosition.BEFOREEND);
 
 const tripPresentor = new TripPresenter(siteEvents);
-tripPresentor.init()
-
-
-
+tripPresentor.init();
