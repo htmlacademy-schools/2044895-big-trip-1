@@ -19,7 +19,6 @@ const siteEvents = document.querySelector('.trip-events');
 renderElement(siteMenuInfo, new MenuInfo(), renderPosition.AFTERBEGIN);
 renderElement(siteMenu, new Menu(), renderPosition.BEFOREEND);
 renderElement(siteFilters, new Filters(), renderPosition.BEFOREEND);
-renderElement(siteEvents, new Sort(), renderPosition.BEFOREEND);
 
 const tripPresentor = new TripPresenter(siteEvents);
 tripPresentor.init()

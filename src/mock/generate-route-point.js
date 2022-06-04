@@ -20,10 +20,24 @@ const descriptions = [
 const generateDescription = () => (descriptions[getRandomInt(0, descriptions.length - 1)]);
 
 
-const pointTypes = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
-const generateType = () => (pointTypes[getRandomInt(0, pointTypes.length - 1)]);
+const times = [
+  { startFull: new Date('2019-03-18T09:15'), endFull: new Date('2019-03-18T10:00'), duration: '45M'},
+  { startFull: new Date('2019-03-18T12:30'), endFull: new Date('2019-03-18T14:15'), duration: '1H 45M'},
+  { startFull: new Date('2019-03-18T15:30'), endFull: new Date('2019-03-18T15:50'), duration: '20M'},
+  { startFull: new Date('2019-03-18T18:00'), endFull: new Date('2019-03-18T19:20'), duration: '1H 20'},
+  { startFull: new Date('2019-03-18T22:05'), endFull: new Date('2019-03-18T22:40'), duration: '35M'},
+  { startFull: new Date('2019-03-18T23:00'), endFull: new Date('2019-03-18T23:40'), duration: '40М'}];
+const generateTime = () => {
+  const time = times[getRandomInt(0, times.length - 1)];
+  time.start = time.startFull.toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' });
+  time.end = time.endFull.toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' });
+  return time;
+};
 
-const offers = ['option1', 'option2', 'option3', 'option4', 'option5', 'option6'];
+const offerTypes = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
+const generateType = () => (offerTypes[getRandomInt(0, offerTypes.length - 1)]);
+
+const offers = ['Order Uber', 'Add luggage', 'Add breakfast', 'Rent a car'];
 const generateOfferName = () => (offers[getRandomInt(0, offers.length - 1)]);
 
 const cities = ['Tokyo', 'Paris', 'Vladivostok', 'Rome', 'London', 'San Francisco', 'Los Angeles', 'Sydney', 'Bruges'];
@@ -40,8 +54,9 @@ export const generateRoutePoint = function () {
     },
     id: nanoid(),
     type: newType,
+    time: generateTime(),
     isFavorite: false,
     description: generateDescription(),
-    pictureSrc: `http://picsum.photos/248/152?r=${Math.random()}`
+    pictureSrc: `https://picsum.photos/248/152?r=${Math.random()}`
   };
 };
