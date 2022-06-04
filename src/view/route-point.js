@@ -1,7 +1,7 @@
 import AbstractView from './abstract-view';
 
 export const createRoutePointTemplate = (routePoint) => {
-  const { type, city, offers, pictureSrc } = routePoint;
+  const { type, time, city, offers, pictureSrc } = routePoint;
 
   return `<li class="trip-events__item">
     <div class="event">
@@ -12,11 +12,11 @@ export const createRoutePointTemplate = (routePoint) => {
       <h3 class="event__title">${type} ${city}</h3>
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" dateTime="2019-03-18T10:30">10:30</time>
+          <time class="event__start-time" dateTime=${time.startFull}>${time.start}</time>
           &mdash;
-          <time class="event__end-time" dateTime="2019-03-18T11:00">11:00</time>
+          <time class="event__end-time" dateTime=${time.endFull}>${time.end}</time>
         </p>
-        <p class="event__duration">30M</p>
+        <p class="event__duration">${time.duration}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${offers.cost}</span>
@@ -24,9 +24,9 @@ export const createRoutePointTemplate = (routePoint) => {
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
         <li class="event__offer">
-          <span class="event__offer-title">${offers.Name}</span>
+          <span class="event__offer-title">${offers.name}</span>
           &plus;&euro;&nbsp;
-          <span class="event__offer-price">${offers.cost}}</span>
+          <span class="event__offer-price">${offers.cost}</span>
         </li>
       </ul>
       <button class="event__favorite-btn event__favorite-btn--active" type="button">

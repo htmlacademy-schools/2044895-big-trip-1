@@ -3,18 +3,72 @@ import {generateRoutePoint} from '../mock/generate-route-point';
 import ListEmptyMessage from '../view/list-empty';
 import RoutePointLists from '../view/route-point-lists';
 import RoutePointPresenter from './route-point-presenter';
+import {sortTypes} from '../utils/consts';
+import Sort from '../view/sort';
+import {sortPrice, sortTime} from '../utils/sorts';
 
 export default class TripPresenter {
-  #tripContainer = null
+  #tripContainer = null;
   #routePoints = [];
   #routePointList = new RoutePointLists();
   #routePointPresentor = new Map();
+
+  #sortComponent = new Sort();
+  #currentSortType = sortTypes.DEFAULT;
+  #sourcedRoutePoints = [];
 
   constructor(tripContainer) {
     this.#tripContainer = tripContainer;
   }
 
   init = () => {
+    this.#renderSort();
+    this.#renderRoutePointList();
+    this.#generateRoutePoints();
+    this.#sourcedRoutePoints = this.#routePoints;
+    this.#renderRoutePoints();
+    this.#setListeners();
+  }
+
+  #generateRoutePoints = () => {
+    for (let i = 0; i < 5; i++) {
+      this.#routePoints.push(generateRoutePoint());
+    }
+  }
+
+  #sortRoutePoints = (sortType) => {
+    this.#currentSortType = sortType;
+    switch (sortType) {
+      case 'DAY':
+        this.#routePoints.sort();
+        break;
+      case 'EVENT':
+        this.#routePoints.sort();
+        break;
+      case 'TIME':
+        this.#routePoints.sort(sortTime);
+        break;
+      case 'PRICE':
+        this.#routePoints.sort(sortPrice);
+        break;
+      case 'OFFERS':
+        this.#routePoints.sort();
+        break;
+      default :
+        this.#routePoints = [...this.#sourcedRoutePoints];
+    }
+  }
+
+  #setListeners = () => {
+    this.#sortComponent.setSortTypeChangedHandler(this.#handleSortTypeChanged);
+  }
+
+  #handleSortTypeChanged = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    this.#sortRoutePoints(sortType);
+    this.#clearRoutePointList();
     this.#renderRoutePoints();
   }
 
@@ -46,6 +100,10 @@ export default class TripPresenter {
     ];
   }
 
+  #renderSort = () => {
+    renderElement(this.#tripContainer, this.#sortComponent, renderPosition.BEFOREEND);
+  }
+
   #renderListEmptyMessage = () => {
     renderElement(this.#routePointList, new ListEmptyMessage(), renderPosition.BEFOREEND);
   }
@@ -63,14 +121,10 @@ export default class TripPresenter {
 
   #renderRoutePoints = () => {
     if (this.#routePoints.length === 0) {
-      //this.#renderListEmptyMessage();
-      //return;
+      this.#renderListEmptyMessage();
+      return;
     }
-
-    this.#renderRoutePointList();
-
-    for (let i = 0; i < 5; i++) {
-      this.#routePoints.push(generateRoutePoint());
+    for (let i = 0; i < this.#routePoints.length; i++) {
       this.#renderRoutePoint(this.#routePoints[i]);
     }
   }
