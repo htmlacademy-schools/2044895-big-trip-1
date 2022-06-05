@@ -48,6 +48,7 @@ export default class RoutePointPresenter {
       if (evt.key === 'Esc' || evt.key === 'Escape') {
         evt.preventDefault();
         this.replaceEditFormToPoint();
+        this.#editFormComponent.reset(this.#routePoint);
         document.removeEventListener('keydown', onEscKeyDown);
       }
     };
@@ -70,11 +71,11 @@ export default class RoutePointPresenter {
     });
 
     this.#routePointComponent.setFavoriteClickHandler(() => {
-      this.handleFavoriteClick();
+      this.#handleFavoriteClick();
     });
   }
 
-  handleFavoriteClick = () => {
+  #handleFavoriteClick = () => {
     this.#routePoint.isFavorite = this.#routePoint.isFavorite;
     this.#changeData(this.#routePoint);
   }

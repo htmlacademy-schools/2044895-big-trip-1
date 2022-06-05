@@ -1,10 +1,10 @@
 
 export const sortTime = (a, b) => {
-  if (a.time.start < b.time.start) {
+  if (a.date.start < b.date.start) {
     return 1;
   }
 
-  if (a.time.start > b.time.start) {
+  if (a.date.start > b.date.start) {
     return -1;
   }
 

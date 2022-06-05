@@ -1,7 +1,7 @@
 import AbstractView from './abstract-view';
 
 export const createRoutePointTemplate = (routePoint) => {
-  const { type, time, city, offers, pictureSrc } = routePoint;
+  const { type, date, city, offers, pictureSrc } = routePoint;
 
   return `<li class="trip-events__item">
     <div class="event">
@@ -12,11 +12,11 @@ export const createRoutePointTemplate = (routePoint) => {
       <h3 class="event__title">${type} ${city}</h3>
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" dateTime=${time.startFull}>${time.start}</time>
+          <time class="event__start-time" dateTime=${date.startFull}>${date.start}</time>
           &mdash;
-          <time class="event__end-time" dateTime=${time.endFull}>${time.end}</time>
+          <time class="event__end-time" dateTime=${date.endFull}>${date.end}</time>
         </p>
-        <p class="event__duration">${time.duration}</p>
+        <p class="event__duration">${date.duration}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${offers.cost}</span>

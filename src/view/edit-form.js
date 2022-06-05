@@ -1,5 +1,8 @@
 import SmartView from './smart-view';
 import {generateDescription} from '../mock/generate-route-point';
+import flatpickr from 'flatpickr';
+
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 export const createEditForm= (routePoint) => {
   const { type, city, description } = routePoint;
@@ -165,15 +168,53 @@ export const createEditForm= (routePoint) => {
 };
 
 export default class EditForm extends SmartView{
+  #datePickerFrom = null;
+  #datePickerTo = null;
 
   constructor(routePoint) {
     super();
-    this._data = EditForm.routePointToData(routePoint);
+    this._data = EditForm.parseRoutePointToData(routePoint);
+    this.#setDatePicker();
   }
 
   restoreHandlers = () => {
     this.setFormSubmitHandeler(this._callback.formSubmit);
     this.setEditClickHandeler(this._callback.editClick);
+    this.#setDatePicker();
+  }
+
+  #setDatePicker = () => {
+    this.#datePickerFrom = flatpickr(
+      this.element.querySelector('.event__input-start-time'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._data.dateFrom,
+        onChange: this.#dateFromChangeHandler
+      },
+    );
+
+    this.#datePickerTo = flatpickr(
+      this.element.querySelector('.event__input-end-time'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._data.dateTo,
+        onChange: this.#dateToChangeHandler
+      },
+    );
+  }
+
+  #dateFromChangeHandler = ([userDate]) => {
+    this.updateData({
+      dateFrom: userDate
+    });
+  }
+
+  #dateToChangeHandler = ([userDate]) => {
+    this.updateData({
+      dateTo: userDate
+    });
   }
 
   setFormSubmitHandeler = (callback) => {
@@ -197,8 +238,27 @@ export default class EditForm extends SmartView{
     this._callback.editClick();
   }
 
+  #dueDateChangeHandler = ([userDate]) => {
+    this.updateData({
+      date: userDate
+    });
+  }
+
   get template() {
     return createEditForm(this._data);
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this.#datePickerFrom) {
+      this.#datePickerFrom.destroy();
+      this.#datePickerFrom = null;
+    }
+    if (this.#datePickerTo) {
+      this.#datePickerTo.destroy();
+      this.#datePickerTo = null;
+    }
   }
 
   #parseDataToRoutePoint = (data) => {
@@ -208,5 +268,9 @@ export default class EditForm extends SmartView{
     return routePoint;
   }
 
-  static routePointToData = (routePoint) => ({...routePoint});
+  static parseRoutePointToData = (routePoint) => ({...routePoint});
+
+  reset = (routePoint) => {
+    this.updateData(EditForm.parseRoutePointToData(routePoint));
+  }
 }

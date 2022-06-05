@@ -6,18 +6,18 @@ const getRandomInt = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-const times = [
+const dates = [
   { startFull: new Date('2019-03-18T09:15'), endFull: new Date('2019-03-18T10:00'), duration: '45M'},
   { startFull: new Date('2019-03-18T12:30'), endFull: new Date('2019-03-18T14:15'), duration: '1H 45M'},
   { startFull: new Date('2019-03-18T15:30'), endFull: new Date('2019-03-18T15:50'), duration: '20M'},
   { startFull: new Date('2019-03-18T18:00'), endFull: new Date('2019-03-18T19:20'), duration: '1H 20'},
   { startFull: new Date('2019-03-18T22:05'), endFull: new Date('2019-03-18T22:40'), duration: '35M'},
   { startFull: new Date('2019-03-18T23:00'), endFull: new Date('2019-03-18T23:40'), duration: '40М'}];
-const generateTime = () => {
-  const time = times[getRandomInt(0, times.length - 1)];
-  time.start = time.startFull.toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' });
-  time.end = time.endFull.toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' });
-  return time;
+const generateDate = () => {
+  const date = dates[getRandomInt(0, dates.length - 1)];
+  date.start = date.startFull.toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' });
+  date.end = date.endFull.toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' });
+  return date;
 };
 
 const offerTypes = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
@@ -59,7 +59,7 @@ export const generateRoutePoint = function () {
     },
     id: nanoid(),
     type: newType,
-    time: generateTime(),
+    date: generateDate(),
     isFavorite: false,
     description: generateDescription(newCity),
     pictureSrc: `img/icons/${newType.toLowerCase()}.png`
