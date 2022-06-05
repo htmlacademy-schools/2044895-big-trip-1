@@ -6,20 +6,6 @@ const getRandomInt = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-const descriptions = [
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  'Cras aliquet varius magna, non porta ligula feugiat eget.',
-  'Fusce tristique felis at fermentum pharetra.',
-  'Aliquam id orci ut lectus varius viverra.',
-  'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
-  'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
-  'Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.',
-  'Sed sed nisi sed augue convallis suscipit in sed felis.',
-  'Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus.',
-  'In rutrum ac purus sit amet tempus.'];
-const generateDescription = () => (descriptions[getRandomInt(0, descriptions.length - 1)]);
-
-
 const times = [
   { startFull: new Date('2019-03-18T09:15'), endFull: new Date('2019-03-18T10:00'), duration: '45M'},
   { startFull: new Date('2019-03-18T12:30'), endFull: new Date('2019-03-18T14:15'), duration: '1H 45M'},
@@ -43,10 +29,29 @@ const generateOfferName = () => (offers[getRandomInt(0, offers.length - 1)]);
 const cities = ['Tokyo', 'Paris', 'Vladivostok', 'Rome', 'London', 'San Francisco', 'Los Angeles', 'Sydney', 'Bruges'];
 const generateCity = () => (cities[getRandomInt(0, cities.length - 1)]);
 
+const descriptions = new Map ([
+  ['Tokyo', 'Tokyo is the capital and largest city of Japan. Anime, seafood, Easten culture and architecture here'],
+  ['Paris', 'Paris is the capital and France. Cheese, Vine and Love here'],
+  ['Vladivostok', 'Vladivostok is a port city, the administrative, cultural and economic centre of the Primorye Territory and the Far Eastern Federal District.'],
+  ['Rome', 'Rome is the capital and Italy. Colosseum here'],
+  ['London', 'London is the capital and largest city of England and the United Kingdom. Big Ben, tea and Queen here'],
+  ['San Francisco', 'San Francisco is a city in the U.S. state of California. It is famous for the Golden Gate Bridge.'],
+  ['Los Angeles', 'The city of Los Angeles is the most populous city in California. Located on a broad basin in Southern California, the city is surrounded by vast mountain ranges, valleys, forests, beautiful beaches along the Pacific Ocean, and nearby desert'],
+  ['Sydney', 'Sydney, city, capital of the state of New South Wales, Australia. Located on Australia\'s southeastern coast, Sydney is the country\'s largest city and, with its magnificent harbour and strategic position, is one of the most important ports in the South Pacific.'],
+  ['Bruges', 'Could we reserve judgement on Bruges until we’ve seen the fricking place']]);
+export const generateDescription = (city) => {
+  if (!descriptions.has(city)) {
+    return `${city} is great city, probably...`;
+  }
+  return descriptions.get(city);
+};
+
+
 export const generateRoutePoint = function () {
   const newType = generateType();
+  const newCity = generateCity();
   return {
-    city: generateCity(),
+    city: newCity,
     offers: {
       type: newType,
       name: generateOfferName(),
@@ -56,7 +61,7 @@ export const generateRoutePoint = function () {
     type: newType,
     time: generateTime(),
     isFavorite: false,
-    description: generateDescription(),
-    pictureSrc: `https://picsum.photos/248/152?r=${Math.random()}`
+    description: generateDescription(newCity),
+    pictureSrc: `img/icons/${newType.toLowerCase()}.png`
   };
 };
