@@ -1,6 +1,7 @@
 import RoutePoint from '../view/route-point';
 import EditForm from '../view/edit-form';
-import {renderElement, renderPosition} from '../utils/render';
+import {remove, renderElement, RenderPosition, replace} from '../utils/render';
+import {UpdateType, UserAction} from '../utils/consts';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -24,60 +25,92 @@ export default class RoutePointPresenter {
 
   init = (routePoint) => {
     this.#routePoint = routePoint;
+
+    const prevPointComponent = this.#routePointComponent;
+
     this.#routePointComponent = new RoutePoint(routePoint);
     this.#editFormComponent = new EditForm(routePoint);
     this.#setHandlers();
+
+    if (prevPointComponent === null) {
+      return;
+    }
+
+    if (this.#mode === Mode.DEFAULT) {
+      replace(this.#routePointComponent, prevPointComponent);
+    }
+
+    remove(prevPointComponent);
   }
 
-  render = () => {
-    renderElement(this.#routePointContainer, this.#routePointComponent, renderPosition.BEFOREEND);
+
+  renderRoutePoint = () => {
+    renderElement(this.#routePointContainer, this.#routePointComponent, RenderPosition.BEFOREEND);
   }
 
-  replacePointToEditForm() {
-    this.#routePointContainer.element.replaceChild(this.#editFormComponent.element, this.#routePointComponent.element);
-  }
-
-  replaceEditFormToPoint() {
-    this.#routePointContainer.element.replaceChild(this.#routePointComponent.element, this.#editFormComponent.element);
-    this.#mode = Mode.DEFAULT;
+  updateRenederedPoint = () => {
+    replace(this.#routePointComponent, this.#routePointComponent);
   }
 
   #setHandlers = () => {
-    const onEscKeyDown = (evt) =>
-    {
-      if (evt.key === 'Esc' || evt.key === 'Escape') {
-        evt.preventDefault();
-        this.replaceEditFormToPoint();
-        this.#editFormComponent.reset(this.#routePoint);
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
-
     this.#routePointComponent.setEditClickHandeler(() => {
       this.replacePointToEditForm();
-      document.addEventListener('keydown', onEscKeyDown);
-      this.#changeMode();
-      this.#mode = Mode.EDITING;
+      document.addEventListener('keydown', this.#handleOnEscKeyDown);
+    });
+
+    this.#editFormComponent.setDeleteClickHandeler((routePoint) => {
+      this.#changeData(
+        UserAction.DELETE_ROUTEPOINT,
+        UpdateType.MINOR,
+        routePoint,
+      );
     });
 
     this.#editFormComponent.setEditClickHandeler(() => {
+      this.#editFormComponent.reset(this.#routePoint);
       this.replaceEditFormToPoint();
-      document.removeEventListener('keydown', onEscKeyDown);
+      document.removeEventListener('keydown', this.#handleOnEscKeyDown);
     });
 
-    this.#editFormComponent.setFormSubmitHandeler(() => {
-      this.replaceEditFormToPoint();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
+    this.#editFormComponent.setFormSubmitHandeler(this.#handleFormSubmit);
 
-    this.#routePointComponent.setFavoriteClickHandler(() => {
-      this.#handleFavoriteClick();
-    });
+    this.#routePointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
   }
 
+  #handleOnEscKeyDown = (evt) => {
+    if (evt.key === 'Esc' || evt.key === 'Escape') {
+      evt.preventDefault();
+      this.#editFormComponent.reset(this.#routePoint);
+      this.replaceEditFormToPoint();
+      document.removeEventListener('keydown', this.#handleOnEscKeyDown);
+    }
+  };
+
   #handleFavoriteClick = () => {
-    this.#routePoint.isFavorite = this.#routePoint.isFavorite;
-    this.#changeData(this.#routePoint);
+    this.#changeData(
+      UserAction.UPDATE_ROUTEPOINT,
+      UpdateType.PATCH,
+      {...this.#routePoint, isFavorite: !this.#routePoint.isFavorite});
+  }
+
+  #handleFormSubmit = (routePoint) => {
+    this.replaceEditFormToPoint();
+    this.#changeData(
+      UserAction.UPDATE_ROUTEPOINT,
+      UpdateType.PATCH,
+      {...routePoint});
+    document.removeEventListener('keydown', this.#handleOnEscKeyDown);
+  }
+
+  replacePointToEditForm() {
+    replace(this.#editFormComponent.element, this.#routePointComponent.element);
+    this.#changeMode();
+    this.#mode = Mode.EDITING;
+  }
+
+  replaceEditFormToPoint() {
+    replace(this.#routePointComponent.element, this.#editFormComponent.element);
+    this.#mode = Mode.DEFAULT;
   }
 
   resetView = () => {

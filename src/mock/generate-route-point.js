@@ -1,4 +1,5 @@
 import {nanoid} from 'nanoid';
+import {EventTypes} from '../utils/consts';
 
 const getRandomInt = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -7,21 +8,21 @@ const getRandomInt = (a = 0, b = 1) => {
 };
 
 const dates = [
-  { startFull: new Date('2019-03-18T09:15'), endFull: new Date('2019-03-18T10:00'), duration: '45M'},
-  { startFull: new Date('2019-03-18T12:30'), endFull: new Date('2019-03-18T14:15'), duration: '1H 45M'},
-  { startFull: new Date('2019-03-18T15:30'), endFull: new Date('2019-03-18T15:50'), duration: '20M'},
+  { startFull: new Date('2019-03-11T09:15'), endFull: new Date('2019-03-11T10:00'), duration: '45M'},
+  { startFull: new Date('2019-03-12T12:30'), endFull: new Date('2019-03-12T14:15'), duration: '1H 45M'},
+  { startFull: new Date('2019-03-15T15:30'), endFull: new Date('2019-03-15T15:50'), duration: '20M'},
   { startFull: new Date('2019-03-18T18:00'), endFull: new Date('2019-03-18T19:20'), duration: '1H 20'},
-  { startFull: new Date('2019-03-18T22:05'), endFull: new Date('2019-03-18T22:40'), duration: '35M'},
-  { startFull: new Date('2019-03-18T23:00'), endFull: new Date('2019-03-18T23:40'), duration: '40М'}];
+  { startFull: new Date('2019-03-22T22:05'), endFull: new Date('2019-03-22T22:40'), duration: '35M'},
+  { startFull: new Date('2019-03-28T23:00'), endFull: new Date('2019-03-28T23:40'), duration: '40М'}];
 const generateDate = () => {
   const date = dates[getRandomInt(0, dates.length - 1)];
   date.start = date.startFull.toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' });
   date.end = date.endFull.toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit' });
+  date.startDay = date.startFull.getDate();
   return date;
 };
 
-const offerTypes = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
-const generateType = () => (offerTypes[getRandomInt(0, offerTypes.length - 1)]);
+const generateType = () => (EventTypes[getRandomInt(0, EventTypes.length - 1)]);
 
 const offers = ['Order Uber', 'Add luggage', 'Add breakfast', 'Rent a car'];
 const generateOfferName = () => (offers[getRandomInt(0, offers.length - 1)]);

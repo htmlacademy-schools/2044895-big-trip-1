@@ -1,11 +1,12 @@
 import AbstractView from './abstract-view';
 
 export const createRoutePointTemplate = (routePoint) => {
-  const { type, date, city, offers, pictureSrc } = routePoint;
+  const { type, date, city, offers, isFavorite, pictureSrc } = routePoint;
 
+  const isFavoriteClass = isFavorite ? ' event__favorite-btn--active' : '';
   return `<li class="trip-events__item">
     <div class="event">
-      <time class="event__date" dateTime="2019-03-18">MAR 18</time>
+      <time class="event__date" dateTime="2019-03-18">MAR ${date.startFull.getDate()}</time>
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="${pictureSrc}" alt="Event type icon">
       </div>
@@ -29,7 +30,7 @@ export const createRoutePointTemplate = (routePoint) => {
           <span class="event__offer-price">${offers.cost}</span>
         </li>
       </ul>
-      <button class="event__favorite-btn event__favorite-btn--active" type="button">
+      <button class="event__favorite-btn ${isFavoriteClass}" type="button">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
           <path

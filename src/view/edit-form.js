@@ -2,10 +2,10 @@ import SmartView from './smart-view';
 import {generateDescription} from '../mock/generate-route-point';
 import flatpickr from 'flatpickr';
 
-import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+//import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 export const createEditForm= (routePoint) => {
-  const { type, city, description } = routePoint;
+  const { type, city, offers, description } = routePoint;
 
   return (
     `<form class="event event--edit" action="#" method="post">
@@ -100,7 +100,7 @@ export const createEditForm= (routePoint) => {
           &euro;
         </label>
         <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price"
-               value="160">
+               value="${offers.cost}">
       </div>
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">Delete</button>
@@ -174,13 +174,14 @@ export default class EditForm extends SmartView{
   constructor(routePoint) {
     super();
     this._data = EditForm.parseRoutePointToData(routePoint);
-    this.#setDatePicker();
+   // this.#setDatePicker();
   }
 
   restoreHandlers = () => {
     this.setFormSubmitHandeler(this._callback.formSubmit);
     this.setEditClickHandeler(this._callback.editClick);
-    this.#setDatePicker();
+    this.setDeleteClickHandeler(this._callback.deleteClick);
+    //this.#setDatePicker();
   }
 
   #setDatePicker = () => {
@@ -227,10 +228,16 @@ export default class EditForm extends SmartView{
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
   }
 
+  setDeleteClickHandeler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
+  }
+
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.updateData(this.#parseDataToRoutePoint(this._data));
-    this._callback.formSubmit();
+    this.#destinationChange();
+    this.#costChange();
+    this._callback.formSubmit(EditForm.parseDataToRoutePoint(this._data));
   }
 
   #editClickHandler = (evt) => {
@@ -238,10 +245,23 @@ export default class EditForm extends SmartView{
     this._callback.editClick();
   }
 
-  #dueDateChangeHandler = ([userDate]) => {
+  #deleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(EditForm.parseDataToRoutePoint(this._data));
+  }
+
+  #destinationChange = () => {
+    const city = this.element.querySelector('.event__input--destination').value;
     this.updateData({
-      date: userDate
-    });
+      city: city,
+      description: generateDescription(city)
+    }, true);
+  }
+
+  #costChange = () => {
+    this.updateData({
+      offers: {cost: this.element.querySelector('.event__input--price').value}
+    }, true);
   }
 
   get template() {
@@ -261,14 +281,22 @@ export default class EditForm extends SmartView{
     }
   }
 
-  #parseDataToRoutePoint = (data) => {
+  static parseRoutePointToData = (routePoint) => ({...routePoint});
+
+  static parseDataToRoutePoint = (data) => {
     const routePoint = {...data};
-    routePoint.city = this.element.querySelector('.event__input--destination').value;
-    routePoint.description = generateDescription(routePoint.city);
+    delete routePoint.isDeleting;
+    delete routePoint.isSaving;
+    delete routePoint.isDisabled;
     return routePoint;
   }
 
-  static parseRoutePointToData = (routePoint) => ({...routePoint});
+  //static parseDataToRoutePoint = (data) => {
+  //  const routePoint = {...data};
+  //  routePoint.city = this.element.querySelector('.event__input--destination').value;
+  //  routePoint.description = generateDescription(routePoint.city);
+  //  return routePoint;
+  //}
 
   reset = (routePoint) => {
     this.updateData(EditForm.parseRoutePointToData(routePoint));

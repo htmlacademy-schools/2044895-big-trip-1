@@ -1,3 +1,14 @@
+export const sortDay =(a, b) => {
+  if (a.date.startFull.getDate() < b.date.startFull.getDate()) {
+    return 1;
+  }
+
+  if (a.date.startFull.getDate() > b.date.startFull.getDate()) {
+    return -1;
+  }
+
+  return 0;
+};
 
 export const sortTime = (a, b) => {
   if (a.date.start < b.date.start) {
