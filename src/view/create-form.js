@@ -1,23 +1,16 @@
 import SmartView from './smart-view';
-import {createPointTypesMarkup } from '../utils/path';
-import { getChangedByTypeOffers, changeCheckedOffers, createOffersSectionMarkup } from '../utils/offers';
-import flatpickr from 'flatpickr';
-import he from 'he';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import {EventTypes} from '../utils/consts';
-
-
-const createEventTypeList = () => {
-  return EventTypes.
-  map((eventType) => createEventTypeListItem(eventType)).
-  join('');
-}
 
 const createEventTypeListItem = (eventType) =>
   `<div class="event__type-item">
      <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType.toLowerCase()}">
      <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">${eventType}</label>
    </div>`;
+
+const createEventTypeList = () => EventTypes.
+  map((eventType) => createEventTypeListItem(eventType)).
+  join('');
 
 const createPointAddTemplate = () => {
   return `<li class="trip-events__item">
@@ -148,4 +141,4 @@ export default class PointAddView extends SmartView {
   get template() {
     return createPointAddTemplate();
   }
-};
+}

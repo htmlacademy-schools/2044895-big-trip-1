@@ -174,7 +174,7 @@ export default class EditForm extends SmartView{
   constructor(routePoint) {
     super();
     this._data = EditForm.parseRoutePointToData(routePoint);
-   // this.#setDatePicker();
+    // this.#setDatePicker();
   }
 
   restoreHandlers = () => {

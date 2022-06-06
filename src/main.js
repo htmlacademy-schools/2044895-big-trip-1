@@ -1,7 +1,7 @@
 import { RenderPosition, renderElement } from './utils/render.js';
+import {MenuItem} from '../utils/consts';
 import Menu from './view/menu';
 import MenuInfo from './view/menu-info';
-import Filters from './view/filters.js';
 import TripPresenter from './presenter/trip-presenter';
 import PointsModel from './model/points-model';
 import FilterModel from './model/filters-model';
@@ -38,4 +38,4 @@ const handleSiteMenuClick = (menuItem) => {
     case MenuItem.STATS:
       break;
   }
-}
+};
