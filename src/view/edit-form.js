@@ -1,8 +1,11 @@
 import SmartView from './smart-view';
 import {generateDescription} from '../mock/generate-route-point';
+import flatpickr from 'flatpickr';
+
+//import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 export const createEditForm= (routePoint) => {
-  const { type, city, description } = routePoint;
+  const { type, city, offers, description } = routePoint;
 
   return (
     `<form class="event event--edit" action="#" method="post">
@@ -97,7 +100,7 @@ export const createEditForm= (routePoint) => {
           &euro;
         </label>
         <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price"
-               value="160">
+               value="${offers.cost}">
       </div>
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">Delete</button>
@@ -165,15 +168,54 @@ export const createEditForm= (routePoint) => {
 };
 
 export default class EditForm extends SmartView{
+  #datePickerFrom = null;
+  #datePickerTo = null;
 
   constructor(routePoint) {
     super();
-    this._data = EditForm.routePointToData(routePoint);
+    this._data = EditForm.parseRoutePointToData(routePoint);
+    // this.#setDatePicker();
   }
 
   restoreHandlers = () => {
     this.setFormSubmitHandeler(this._callback.formSubmit);
     this.setEditClickHandeler(this._callback.editClick);
+    this.setDeleteClickHandeler(this._callback.deleteClick);
+    //this.#setDatePicker();
+  }
+
+  #setDatePicker = () => {
+    this.#datePickerFrom = flatpickr(
+      this.element.querySelector('.event__input-start-time'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._data.dateFrom,
+        onChange: this.#dateFromChangeHandler
+      },
+    );
+
+    this.#datePickerTo = flatpickr(
+      this.element.querySelector('.event__input-end-time'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._data.dateTo,
+        onChange: this.#dateToChangeHandler
+      },
+    );
+  }
+
+  #dateFromChangeHandler = ([userDate]) => {
+    this.updateData({
+      dateFrom: userDate
+    });
+  }
+
+  #dateToChangeHandler = ([userDate]) => {
+    this.updateData({
+      dateTo: userDate
+    });
   }
 
   setFormSubmitHandeler = (callback) => {
@@ -186,10 +228,16 @@ export default class EditForm extends SmartView{
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
   }
 
+  setDeleteClickHandeler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
+  }
+
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.updateData(this.#parseDataToRoutePoint(this._data));
-    this._callback.formSubmit();
+    this.#destinationChange();
+    this.#costChange();
+    this._callback.formSubmit(EditForm.parseDataToRoutePoint(this._data));
   }
 
   #editClickHandler = (evt) => {
@@ -197,16 +245,60 @@ export default class EditForm extends SmartView{
     this._callback.editClick();
   }
 
+  #deleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(EditForm.parseDataToRoutePoint(this._data));
+  }
+
+  #destinationChange = () => {
+    const city = this.element.querySelector('.event__input--destination').value;
+    this.updateData({
+      city: city,
+      description: generateDescription(city)
+    }, true);
+  }
+
+  #costChange = () => {
+    this.updateData({
+      offers: {cost: this.element.querySelector('.event__input--price').value}
+    }, true);
+  }
+
   get template() {
     return createEditForm(this._data);
   }
 
-  #parseDataToRoutePoint = (data) => {
+  removeElement() {
+    super.removeElement();
+
+    if (this.#datePickerFrom) {
+      this.#datePickerFrom.destroy();
+      this.#datePickerFrom = null;
+    }
+    if (this.#datePickerTo) {
+      this.#datePickerTo.destroy();
+      this.#datePickerTo = null;
+    }
+  }
+
+  static parseRoutePointToData = (routePoint) => ({...routePoint});
+
+  static parseDataToRoutePoint = (data) => {
     const routePoint = {...data};
-    routePoint.city = this.element.querySelector('.event__input--destination').value;
-    routePoint.description = generateDescription(routePoint.city);
+    delete routePoint.isDeleting;
+    delete routePoint.isSaving;
+    delete routePoint.isDisabled;
     return routePoint;
   }
 
-  static routePointToData = (routePoint) => ({...routePoint});
+  //static parseDataToRoutePoint = (data) => {
+  //  const routePoint = {...data};
+  //  routePoint.city = this.element.querySelector('.event__input--destination').value;
+  //  routePoint.description = generateDescription(routePoint.city);
+  //  return routePoint;
+  //}
+
+  reset = (routePoint) => {
+    this.updateData(EditForm.parseRoutePointToData(routePoint));
+  }
 }

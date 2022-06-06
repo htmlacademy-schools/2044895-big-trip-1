@@ -1,73 +1,90 @@
-import {renderElement, renderPosition} from '../utils/render';
-import {generateRoutePoint} from '../mock/generate-route-point';
+import {remove, renderElement, RenderPosition} from '../utils/render';
 import ListEmptyMessage from '../view/list-empty';
 import RoutePointLists from '../view/route-point-lists';
 import RoutePointPresenter from './route-point-presenter';
-import {sortTypes} from '../utils/consts';
+import {SortType, UpdateType, UserAction} from '../utils/consts';
 import Sort from '../view/sort';
-import {sortPrice, sortTime} from '../utils/sorts';
+import {sortDay, sortPrice, sortTime} from '../utils/sorts';
+import {filter} from '../utils/filter';
 
 export default class TripPresenter {
   #tripContainer = null;
-  #routePoints = [];
   #routePointList = new RoutePointLists();
+  #routePointsModel = null;
+  #filterModel = null;
   #routePointPresentor = new Map();
 
-  #sortComponent = new Sort();
-  #currentSortType = sortTypes.DEFAULT;
-  #sourcedRoutePoints = [];
+  #currentSortType = SortType.DAY;
+  #sortComponent = new Sort(this.#currentSortType);
 
-  constructor(tripContainer) {
+
+  constructor(tripContainer, routePointsModel, filterModel) {
     this.#tripContainer = tripContainer;
+    this.#routePointsModel = routePointsModel;
+    this.#filterModel = filterModel;
+  }
+
+  get routePoints() {
+    const filterType = this.#filterModel.filter;
+    const routePoints = this.#routePointsModel.routePoints;
+    const filtredRoutePoints = filter[filterType](routePoints);
+
+    switch (this.#currentSortType) {
+      case SortType.DAY:
+        return filtredRoutePoints.sort(sortDay);
+      case SortType.TIME:
+        return filtredRoutePoints.sort(sortTime);
+      case SortType.PRICE:
+        return filtredRoutePoints.sort(sortPrice);
+    }
+    return filtredRoutePoints;
   }
 
   init = () => {
-    this.#renderSort();
-    this.#renderRoutePointList();
-    this.#generateRoutePoints();
-    this.#sourcedRoutePoints = this.#routePoints;
-    this.#renderRoutePoints();
-    this.#setListeners();
+    this.#routePointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
+    this.#renderTrip();
   }
 
-  #generateRoutePoints = () => {
-    for (let i = 0; i < 5; i++) {
-      this.#routePoints.push(generateRoutePoint());
+  #setHandlers = () => {
+    this.#sortComponent.setSortTypeChangedHandler(this.#handleSortTypeChange);
+  }
+
+  #handleViewAction = (actionType, updateType, update) => {
+    switch (actionType) {
+      case UserAction.UPDATE_ROUTEPOINT:
+        this.#routePointsModel.updateRoutePoint(updateType, update);
+        break;
+      case UserAction.ADD_ROUTEPOINT:
+        this.#routePointsModel.addRoutePoint(updateType, update);
+        break;
+      case UserAction.DELETE_ROUTEPOINT:
+        this.#routePointsModel.deleteRoutePoint(updateType, update);
+        break;
     }
   }
 
-  #sortRoutePoints = (sortType) => {
-    this.#currentSortType = sortType;
-    switch (sortType) {
-      case 'DAY':
-        this.#routePoints.sort();
+  #handleModelEvent = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#routePointPresentor.get(data.id).init(data);
         break;
-      case 'EVENT':
-        this.#routePoints.sort();
+      case UpdateType.MINOR:
+        this.#clearTrip();
+        this.#renderTrip();
         break;
-      case 'TIME':
-        this.#routePoints.sort(sortTime);
+      case UpdateType.MAJOR:
+        this.#clearTrip();
+        this.#renderTrip();
         break;
-      case 'PRICE':
-        this.#routePoints.sort(sortPrice);
-        break;
-      case 'OFFERS':
-        this.#routePoints.sort();
-        break;
-      default :
-        this.#routePoints = [...this.#sourcedRoutePoints];
     }
   }
 
-  #setListeners = () => {
-    this.#sortComponent.setSortTypeChangedHandler(this.#handleSortTypeChanged);
-  }
-
-  #handleSortTypeChanged = (sortType) => {
+  #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
     }
-    this.#sortRoutePoints(sortType);
+    this.#currentSortType = sortType;
     this.#clearRoutePointList();
     this.#renderRoutePoints();
   }
@@ -77,7 +94,6 @@ export default class TripPresenter {
   }
 
   #handleRoutePointChange = (updatedRoutePoint) => {
-    this.#routePoints = this.updateItem(this.#routePoints, updatedRoutePoint);
     this.#routePointPresentor.get(updatedRoutePoint.id).init(updatedRoutePoint);
   }
 
@@ -86,46 +102,59 @@ export default class TripPresenter {
     this.#routePointPresentor.clear();
   }
 
-  updateItem = (list, updatedItem) => {
-    const index = list.findIndex((item) => item.id === updatedItem.id);
-
-    if (index === -1) {
-      return list;
-    }
-
-    return [
-      ...list.slice(0, index),
-      updatedItem,
-      ...list.slice(index + 1)
-    ];
-  }
-
   #renderSort = () => {
-    renderElement(this.#tripContainer, this.#sortComponent, renderPosition.BEFOREEND);
+    renderElement(this.#tripContainer, this.#sortComponent, RenderPosition.BEFOREEND);
   }
 
   #renderListEmptyMessage = () => {
-    renderElement(this.#routePointList, new ListEmptyMessage(), renderPosition.BEFOREEND);
+    renderElement(this.#routePointList, new ListEmptyMessage(), RenderPosition.BEFOREEND);
   }
 
   #renderRoutePointList = () => {
-    renderElement(this.#tripContainer, this.#routePointList, renderPosition.BEFOREEND);
+    renderElement(this.#tripContainer, this.#routePointList, RenderPosition.BEFOREEND);
   }
 
   #renderRoutePoint = (routePoint) => {
-    const routePointPresenter = new RoutePointPresenter(this.#routePointList, this.#handleRoutePointChange, this.#handleModeChange);
+    const routePointPresenter = new RoutePointPresenter(this.#routePointList, this.#handleViewAction, this.#handleModeChange);
     routePointPresenter.init(routePoint);
     this.#routePointPresentor.set(routePoint.id, routePointPresenter);
-    routePointPresenter.render();
+    routePointPresenter.renderRoutePoint();
   }
 
   #renderRoutePoints = () => {
-    if (this.#routePoints.length === 0) {
-      this.#renderListEmptyMessage();
+    const routePointsCount = this.routePoints.length;
+    if ( routePointsCount === 0) {
+      //this.#renderListEmptyMessage();
       return;
     }
-    for (let i = 0; i < this.#routePoints.length; i++) {
-      this.#renderRoutePoint(this.#routePoints[i]);
+    for (let i = 0; i < routePointsCount; i++) {
+      this.#renderRoutePoint(this.routePoints[i]);
     }
+  }
+
+  #renderTrip = () => {
+    this.#renderSort();
+    this.#renderRoutePointList();
+    this.#renderRoutePoints();
+    this.#setHandlers();
+  }
+
+  #clearTrip = (resetSortType) => {
+    this.#routePointPresentor.forEach((presentor) => presentor.destroy());
+    this.#routePointPresentor.clear();
+
+    remove(this.#sortComponent);
+    remove(this.#routePointList);
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DEFAULT;
+    }
+  }
+
+  destroy = () => {
+    this.#clearTrip(true);
+
+    this.#routePointsModel.removeObserver(this.#handleModelEvent);
+    this.#filterModel.removeObserver(this.#handleModelEvent);
   }
 }
